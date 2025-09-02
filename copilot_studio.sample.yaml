@@ -1,0 +1,24 @@
+swagger: '2.0'
+info:
+  title: Secoda MCP
+  description: Secoda Model Context Protocol server for data catalog access and management
+  version: 1.0.0
+host: b8b4198d8693.ngrok-free.app
+basePath: /mcp
+schemes:
+  - https
+paths:
+  /:
+    post:
+      summary: Execute MCP request to interact with Secoda data catalog
+      operationId: InvokeMCP
+      x-ms-agentic-protocol: mcp-streamable-1.0
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Successfully executed MCP request and returned response
+          schema:
+            type: object
