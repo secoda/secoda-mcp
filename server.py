@@ -1,4 +1,5 @@
 import os
+import json
 
 import requests
 from fastmcp import FastMCP
@@ -24,7 +25,7 @@ mcp = FastMCP(
 
 
 def call_tool(tool_name: str, args: dict):
-    """Call a tool."""
+    """Call a tool and unwrap the Secoda MCP response."""
     api_url = API_URL if API_URL.endswith("/") else f"{API_URL}/"
 
     response = requests.post(
@@ -39,7 +40,37 @@ def call_tool(tool_name: str, args: dict):
         },
     )
     response.raise_for_status()
-    return response.json()
+    
+    # Get the JSON response
+    json_response = response.json()
+
+    # Extract the content from the Secoda API response
+    def extract_text(content):
+        """Safely extract text from content blocks."""
+        if isinstance(content, list):
+            blocks = [
+                item.get("text", "")
+                for item in content
+                if isinstance(item, dict) and item.get("type") == "text"
+            ]
+            return "\n".join(blocks).strip()
+        if isinstance(content, str):
+            return content.strip()
+        return ""
+
+    # Unwrap common Secoda response formats
+    if isinstance(json_response, dict):
+        if "content" in json_response:
+            return extract_text(json_response["content"])
+
+        result = json_response.get("result")
+        if isinstance(result, str):
+            return result.strip()
+        if isinstance(result, dict) and "content" in result:
+            return extract_text(result["content"])
+
+    # Fallback: return formatted JSON if no text found 
+    return json.dumps(json_response, indent=2)
 
 
 @mcp.tool()
