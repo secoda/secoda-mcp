@@ -1,4 +1,5 @@
 import os
+import typing
 
 import requests
 from fastmcp import FastMCP
@@ -43,9 +44,9 @@ def call_tool(tool_name: str, args: dict):
 
 
 @mcp.tool()
-def run_sql(query: str) -> str:
+def run_sql(query: str, integration_id: typing.Optional[str] = None) -> str:
     """Run a SQL query on the database."""
-    return call_tool("run_sql", {"query": query})
+    return call_tool("run_sql", {"query": query, "integration_id": integration_id})
 
 
 @mcp.tool()

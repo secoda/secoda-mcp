@@ -61,7 +61,7 @@ To integrate Secoda MCP with Cursor, add the following configuration to your `~/
 ```json
 {
     "mcpServers": {
-        "secoda-mcp": {
+        "secoda_mcp": {
             "command": "python",
             "args": [
                 "/path/to/secoda-mcp/server.py"
